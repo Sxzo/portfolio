@@ -148,7 +148,7 @@ function App() {
       sourceLink: "https://github.com/Sxzo/Handtracking-Colormatch"
     },
     {
-      title: "Full Smart Home Dashboard",
+      title: "Full IoT Smart Home Dashboard",
       description: "Built a platform that enabled real-time monitoring and control of smart home devices, including lights, cameras, and even my car!",
       technologies: ["Python", "Flask", "React", "MongoDB", "AWS", "JavaScript"],
       image: "./project3.jpg"
