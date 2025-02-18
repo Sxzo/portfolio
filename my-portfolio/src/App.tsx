@@ -91,7 +91,7 @@ function App() {
       title: "Fundamentals Modeling & Innovation Intern",
       company: "British Petroleum (BP) Inc.",
       period: "June 2023 - August 2023",
-      logo: "/company1-logo.png",
+      logo: "./company1-logo.png",
       description: [
         "Developed robust and scalable Python data pipelines to automate data ingestion, transformation, and processing for advanced ML models, improving data accessibility and reducing processing times by up to 40%",
         "Refactored legacy models using Python and Dataiku, achieving a 50% boost in computational efficiency and facilitating smoother integration with new datasets",
@@ -102,7 +102,7 @@ function App() {
       title: "ExitPath Lead Engineer",
       company: "Hard Fork (VC)",
       period: "September 2024 - Present",
-      logo: "/company4-logo.png",
+      logo: "./company4-logo.png",
       description: [
         "Researching and protyping an AI-powered analysis tool to help founders and investors make data-driven decisions",
         "More coming soon..."
@@ -112,7 +112,7 @@ function App() {
       title: "Software Engineer & Product Lead ",
       company: "DuelDog",
       period: "May 2023 - March 2024",
-      logo: "/company3-logo.png",
+      logo: "./company3-logo.png",
       description: [
         "Led a team of cross-functional engineers to redesign and optimize the site architecture, transforming the legacy .NET framework into a cloud based platform built on AWS, improving scalability and operational efficiency",
         "Developed and optimized key product features by implementing RESTful APIs and various critical microservices, reducing load times by 30% and enhancing real-time data synchronization across the platform",
@@ -123,7 +123,7 @@ function App() {
       title: "Intro to C++ Teaching Assistant (CS 128)",
       company: "University of Illinois",
       period: "May 2022 - August 2022",
-      logo: "/company2-logo.png",
+      logo: "./company2-logo.png",
       description: [
         "Guided 115+ students mastering C++ by providing targeted support, tutoring, and code reviews, helping students overcome project challenges and boosting overall engagement and success in CS 128",
         "Strengthened software engineering and debugging skills through hands-on troubleshooting of over 200 projects",
@@ -137,27 +137,27 @@ function App() {
       title: "Live AI Powered Trading Bot",
       description: "Spent 300+ hours building a live AI powered trading bot that converted natural language ideas from Discord into working trades using ChatGPT and $2,000 in capital",
       technologies: ["React", "TypeScript","AWS", "Python", "ChatGPT", "EC2", "Discord API"],
-      image: "/project1.png",
+      image: "./project1.png",
       demoLink: "https://message.style/cdn/images/b3ca0ea985a6d5c0284408f7a28eb09a2978ad0242b104bd687653672a24e054.png"
     },
     {
       title: "Handtracking Color Match",
       description: "Used a hand tracking neural network model to create an interactive color matching game",
       technologies: ["Python", "OpenCV", "TensorFlow", "PyGame"],
-      image: "/project2.gif",
+      image: "./project2.gif",
       sourceLink: "https://github.com/Sxzo/Handtracking-Colormatch"
     },
     {
       title: "Full Home IoT Dashboard",
       description: "Built a platform that enabled real-time monitoring and control of smart home devices, including lights, cameras, and even my car!",
       technologies: ["Python", "Flask", "React", "MongoDB", "AWS", "JavaScript"],
-      image: "/project3.jpg"
+      image: "./project3.jpg"
     },
     {
       title: "Wikipedia Connectivity Visualizer",
       description: "Used advanced graph algorithms to visualize the connectivity of Wikipedia pages, allowing users to explore the relationships between different topics and concepts",
       technologies: ["C++", "Graph Algorithms", "Data Structures"],
-      image: "/project4.gif",
+      image: "./project4.gif",
       sourceLink: "https://github.com/jmorrissey23/Wikipedia-Analysis?tab=readme-ov-file",
       demoLink: "https://github.com/joetamulaitis/cryptic/blob/main/documents/results.md"
     },
@@ -165,7 +165,7 @@ function App() {
       title: "Exam Grade Calculator",
       description: "Created a modern and responsive interface for calculating exam grades based on the percentage of the total points earned",
       technologies: ["React", "CSS", "JavaScript"],
-      image: "/project5.png",
+      image: "./project5.png",
       sourceLink: "https://github.com/Sxzo/Exam-Grade-Calculator",
       demoLink: "https://sxzo.github.io/Exam-Grade-Calculator/"
     },
@@ -173,13 +173,13 @@ function App() {
       title: "Self Driving Car Simulator",
       description: "Built a functional naive self driving car algorithm implemented using a Raspberry Pi and a Raspberry Pi Camera",
       technologies: ["Arduino", "Python", "OpenCV", "Raspberry Pi"],
-      image: "/project6.gif"
+      image: "./project6.gif"
     },
     {
       title: "Govee Smart Lights Python Library",
       description: "Created a Python library to control Govee smart lights, allowing users to easily set colors, brightness, and other lighting effects",
       technologies: ["Python", "Flask"],
-      image: "/project7.jpg",
+      image: "./project7.jpg",
       sourceLink: "https://github.com/Sxzo/Govee-Python-Library"
     }
   ];
@@ -245,7 +245,7 @@ function App() {
       <header>
         <div className="profile-section">
           <img 
-            src="/profile-picture.png" 
+            src="./profile-picture.png" 
             alt="Profile Picture" 
             className="profile-picture"
           />
@@ -274,8 +274,7 @@ function App() {
       <section id="about" className="about">
         <h2><FaUser className="section-icon" /> About Me</h2>
         <p>
-          I'm a Computer Science and Economics student at the University of Illinois at Urbana-Champaign, with a strong passion for financial markets and AI. I love building projects that make the world a better place. 
-          I have a strong interest in the intersection of technology and finance, and I'm always looking for new ways to apply my skills to real-world problems. I plan on starting my full-time career at BP after graduation.
+          I'm a Computer Science and Economics student at the University of Illinois at Urbana-Champaign, with a strong passion for financial markets and AI. I love building projects that make the world a better place. I plan on starting my full-time career at BP after graduation.
         </p>
       </section>
 
@@ -290,7 +289,7 @@ function App() {
             <p className="gpa">GPA: 3.98/4.00</p>
           </div>
           <div className="education-image">
-            <img src="/uiuc-campus.jpg" alt="UIUC Campus" />
+            <img src="./uiuc-campus.jpg" alt="UIUC Campus" />
           </div>
         </div>
       </section>

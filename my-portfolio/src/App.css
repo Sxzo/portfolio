@@ -318,9 +318,11 @@ body {
 }
 
 .wave {
-  display: inline-block;
+  display: inline-block !important;
   animation: wave 2s infinite;
   transform-origin: 70% 70%;
+  margin-right: 0.5rem;
+  vertical-align: middle;
 }
 
 @keyframes wave {
@@ -332,6 +334,13 @@ body {
   50% { transform: rotate(10deg); }
   60% { transform: rotate(0deg); }
   100% { transform: rotate(0deg); }
+}
+
+@media (max-width: 768px) {
+  .wave {
+    display: inline-block !important;
+    font-size: 0.8em;
+  }
 }
 
 /* Quote box styles */
