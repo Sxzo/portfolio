@@ -1,6 +1,17 @@
 const PANTRY_ID = "6658418c-dc70-4ca0-a9d2-0cb94b44502c"; // You'll need to create this at getpantry.cloud
 const BASE_URL = `https://getpantry.cloud/apiv1/pantry/${PANTRY_ID}`;
 
+interface Record {
+  name: string;
+  wpm: number;
+  accuracy: number;
+  timestamp: number;
+}
+
+interface Records {
+  [passageId: string]: Record;
+}
+
 interface LeaderboardEntry {
   name: string;
   wpm: number;
@@ -10,6 +21,16 @@ interface LeaderboardEntry {
 
 interface PassageLeaderboard {
   [passageId: string]: LeaderboardEntry[];
+}
+
+// Update the interface to represent a single record
+interface PassageRecord {
+  [passageId: string]: {
+    name: string;
+    wpm: number;
+    accuracy: number;
+    timestamp: number;
+  };
 }
 
 // Utility to fetch all scores for a passage
@@ -85,83 +106,90 @@ export const pantryService = {
     );
   },
 
+  async getRecord(passageId: string): Promise<Record | null> {
+    try {
+      const response = await fetch(`${BASE_URL}/basket/records`, {
+        method: 'GET',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        mode: 'cors',
+      });
+      
+      if (!response.ok) {
+        if (response.status === 404) {
+          // Create the basket if it doesn't exist
+          await fetch(`${BASE_URL}/basket/records`, {
+            method: 'POST',
+            headers: {
+              'Content-Type': 'application/json',
+            },
+            mode: 'cors',
+            body: JSON.stringify({}),
+          });
+          return null;
+        }
+        throw new Error('Failed to fetch record');
+      }
+
+      const data: Records = await response.json();
+      return data[passageId] || null;
+    } catch (error) {
+      console.error('Error fetching record:', error);
+      return null;
+    }
+  },
+
   /**
    * Submit a new score, overwriting the old score if the name already exists.
    * Stores up to top 10 in the backend. (Adjust as desired.)
    */
   async submitScore(
     passageId: string,
-    entry: Omit<LeaderboardEntry, 'timestamp'>
+    entry: Omit<Record, 'timestamp'>
   ): Promise<boolean> {
-    if (this.isSubmitting) {
-      return false;
-    }
+    if (this.isSubmitting) return false;
 
     try {
       this.isSubmitting = true;
       const trimmedName = entry.name.trim();
+      if (!trimmedName) return false;
+
+      // Get current record
+      const currentRecord = await this.getRecord(passageId);
       
-      if (!trimmedName) {
+      // Only save if it's a new record
+      if (currentRecord && entry.wpm <= currentRecord.wpm) {
         return false;
       }
 
-      // Get current leaderboard data
-      const response = await fetch(`${BASE_URL}/basket/typeracer-leaderboard`, {
+      // Get existing records
+      const response = await fetch(`${BASE_URL}/basket/records`, {
         method: 'GET',
         headers: {
           'Content-Type': 'application/json',
-          'Accept': 'application/json',
         },
         mode: 'cors',
       });
       
-      // Get existing data or start with empty object
-      const data: PassageLeaderboard = response.ok ? await response.json() : {};
-      
-      // Get existing scores for this passage
-      const existingScores = data[passageId] || [];
+      const data: Records = response.ok ? await response.json() : {};
 
-      // Create the new score
-      const newScore: LeaderboardEntry = {
-        name: trimmedName,
-        wpm: entry.wpm,
-        accuracy: entry.accuracy,
-        timestamp: Date.now()
-      };
-
-      // Combine existing scores with new score, remove duplicates by name,
-      // sort by WPM, and take top 3
-      const updatedScores = [...existingScores, newScore]
-        // Remove duplicates (keep the latest score for each name)
-        .reduce((acc, current) => {
-          const x = acc.find(item => item.name.toLowerCase() === current.name.toLowerCase());
-          if (!x) {
-            return acc.concat([current]);
-          } else {
-            // If duplicate found, keep the one with higher WPM
-            return acc.map(item => 
-              item.name.toLowerCase() === current.name.toLowerCase()
-                ? (item.wpm > current.wpm ? item : current)
-                : item
-            );
-          }
-        }, [] as LeaderboardEntry[])
-        // Sort by WPM and keep top 3
-        .sort((a, b) => b.wpm - a.wpm)
-        .slice(0, 3);
-
-      // Update data with new scores
+      // Update with new record
       const newData = {
         ...data,
-        [passageId]: updatedScores
+        [passageId]: {
+          name: trimmedName,
+          wpm: entry.wpm,
+          accuracy: entry.accuracy,
+          timestamp: Date.now()
+        }
       };
 
-      // Save the updated leaderboard
-      const saveResponse = await fetch(`${BASE_URL}/basket/typeracer-leaderboard`, {
+      // Save the new record
+      const saveResponse = await fetch(`${BASE_URL}/basket/records`, {
         method: 'PUT',
         headers: {
           'Content-Type': 'application/json',
-          'Accept': 'application/json',
         },
         mode: 'cors',
         body: JSON.stringify(newData)
@@ -173,6 +201,29 @@ export const pantryService = {
       return false;
     } finally {
       this.isSubmitting = false;
+    }
+  },
+
+  async getAllRecords(): Promise<Record[]> {
+    try {
+      const response = await fetch(`${BASE_URL}/basket/records`, {
+        method: 'GET',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        mode: 'cors',
+      });
+      
+      if (!response.ok) {
+        if (response.status === 404) return [];
+        throw new Error('Failed to fetch records');
+      }
+
+      const data: Records = await response.json();
+      return Object.values(data);
+    } catch (error) {
+      console.error('Error fetching all records:', error);
+      return [];
     }
   },
 };

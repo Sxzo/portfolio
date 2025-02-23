@@ -1,10 +1,35 @@
-import { Link } from 'react-router-dom'
+import { Link, useNavigate } from 'react-router-dom'
 import { FaArrowLeft, FaKeyboard, FaPuzzlePiece, FaBrain } from 'react-icons/fa'
 import './Minigames.css'
-import { useNavigate } from 'react-router-dom';
+import { useState, useEffect } from 'react'
+import { pantryService } from '../services/pantry'
+
+interface Record {
+  wpm: number;
+  accuracy: number;
+  name: string;
+  timestamp: number;
+}
 
 function Minigames() {
   const navigate = useNavigate();
+  const [highestWPM, setHighestWPM] = useState<number | null>(null);
+
+  useEffect(() => {
+    const fetchHighScore = async () => {
+      const allRecords = await pantryService.getAllRecords();
+      if (allRecords && allRecords.length > 0) {
+        const wpms = allRecords.map(record => record.wpm).filter(wpm => !isNaN(wpm));
+        if (wpms.length > 0) {
+          const highest = Math.max(...wpms);
+          setHighestWPM(highest);
+        }
+      }
+    };
+
+    fetchHighScore();
+  }, []);
+
   return (
     <div className="minigames-container">
       <nav className="minigames-nav">
@@ -15,7 +40,7 @@ function Minigames() {
       </nav>
       
       <h1 className="minigames-title">Mini Games</h1>
-      <p className="minigames-subtitle">A collection of fun browser games to test your skills</p>
+      <p className="minigames-subtitle">A collection of fun browser games to test your skills, made by me!</p>
       
       <div className="games-grid">
         <div className="game-card">
@@ -25,7 +50,9 @@ function Minigames() {
           <h2>TypeRacer</h2>
           <p>Test your typing speed and accuracy against others in real-time!</p>
           <div className="game-stats">
-            <span className="stat">🏆 High Score: Coming Soon</span>
+            {highestWPM && (
+              <span className="stat">🏆 High Score: {highestWPM} WPM</span>
+            )}
             <span className="stat">👥 Multiplayer</span>
           </div>
           <button className="play-button" onClick={() => navigate('/minigames/typeracer')}>Play</button>

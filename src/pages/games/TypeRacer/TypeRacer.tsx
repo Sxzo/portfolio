@@ -8,6 +8,7 @@ interface LeaderboardEntry {
   name: string;
   wpm: number;
   accuracy: number;
+  timestamp: number;
 }
 
 interface Quote {
@@ -65,7 +66,7 @@ function TypeRacer() {
   const [elapsedTime, setElapsedTime] = useState(0);
   const inputRef = useRef<HTMLInputElement>(null);
   const timerRef = useRef<NodeJS.Timeout>();
-  const [leaderboard, setLeaderboard] = useState<LeaderboardEntry[]>([]);
+  const [currentRecord, setCurrentRecord] = useState<LeaderboardEntry | null>(null);
   const [currentQuote, setCurrentQuote] = useState<Quote>(SAMPLE_TEXTS[0]);
   const [playerName, setPlayerName] = useState<string>('');
   const [showNameInput, setShowNameInput] = useState(false);
@@ -81,13 +82,20 @@ function TypeRacer() {
     setCurrentQuote(randomQuote);
     setText(randomQuote.text);
     
-    pantryService.getLeaderboard(getPassageId(randomQuote))
-      .then(setLeaderboard);
+    pantryService.getRecord(getPassageId(randomQuote))
+      .then(setCurrentRecord);
 
     return () => {
       if (timerRef.current) clearInterval(timerRef.current);
     };
   }, []);
+
+  const formatDate = (timestamp: number) => {
+    return new Intl.DateTimeFormat('en-US', {
+      dateStyle: 'medium',
+      timeStyle: 'short'
+    }).format(new Date(timestamp));
+  };
 
   const startGame = () => {
     setGameState('playing');
@@ -96,7 +104,12 @@ function TypeRacer() {
     setWpm(null);
     setAccuracy(null);
     setElapsedTime(0);
-    if (inputRef.current) inputRef.current.focus();
+    
+    setTimeout(() => {
+      if (inputRef.current) {
+        inputRef.current.focus();
+      }
+    }, 0);
 
     timerRef.current = setInterval(() => {
       setElapsedTime(prev => prev + 1);
@@ -143,8 +156,8 @@ function TypeRacer() {
     setText(randomQuote.text);
     setUserInput('');
     
-    pantryService.getLeaderboard(getPassageId(randomQuote))
-      .then(setLeaderboard);
+    pantryService.getRecord(getPassageId(randomQuote))
+      .then(setCurrentRecord);
   };
 
   const submitScore = async () => {
@@ -170,8 +183,8 @@ function TypeRacer() {
       }
 
       setNameError('');
-      const updatedLeaderboard = await pantryService.getLeaderboard(getPassageId(currentQuote));
-      setLeaderboard(updatedLeaderboard);
+      const updatedRecord = await pantryService.getRecord(getPassageId(currentQuote));
+      setCurrentRecord(updatedRecord);
       setShowNameInput(false);
     } finally {
       setIsSubmitting(false);
@@ -195,32 +208,46 @@ function TypeRacer() {
         
         {gameState === 'ready' && (
           <>
-            <div className="quote-source">
+            <div className="passage-preview">
+              <div className="preview-header">
+                <h3>Passage Preview</h3>
+                <button 
+                  className="shuffle-button" 
+                  onClick={getRandomQuote}
+                  title="Get new quote"
+                >
+                  <FaRandom /> New Quote
+                </button>
+              </div>
+              <div className="text-display">
+                {text}
+              </div>
               <div className="quote-info">
                 <span className="movie-title">{currentQuote.movie}</span>
                 <span className="movie-year">({currentQuote.year})</span>
               </div>
-              <button 
-                className="shuffle-button" 
-                onClick={getRandomQuote}
-                title="Get new quote"
-              >
-                <FaRandom />
-              </button>
             </div>
-            <div className="leaderboard">
-              <h3>Leaderboard</h3>
-              {leaderboard.map((entry, index) => (
-                <div key={index} className="leaderboard-entry">
-                  <span className="rank">
-                    {index === 0 ? "🥇" : index === 1 ? "🥈" : "🥉"}
-                  </span>
-                  <span className="name">{entry.name}</span>
-                  <span className="stats">
-                    {entry.wpm} WPM • {entry.accuracy}% Accuracy
-                  </span>
+            <div className="record-display">
+              <h3>
+                <span>Current Record 🏆</span>
+              </h3>
+              {currentRecord ? (
+                <div className="record-holder">
+                  <div className="record-info">
+                    <div className="record-name">{currentRecord.name}</div>
+                    <div className="record-stats">
+                      {currentRecord.wpm} WPM • {currentRecord.accuracy}% Accuracy
+                    </div>
+                    <div className="record-date">
+                      Set on {formatDate(currentRecord.timestamp)}
+                    </div>
+                  </div>
                 </div>
-              ))}
+              ) : (
+                <div className="no-record">
+                  No record set yet. Be the first!
+                </div>
+              )}
             </div>
             <button className="start-button" onClick={startGame}>
               Start Typing
@@ -323,21 +350,27 @@ function TypeRacer() {
               </div>
             )}
 
-            <div className="leaderboard">
-              <h3>Leaderboard for {currentQuote.movie}</h3>
-              {leaderboard.map((entry, index) => (
-                <div key={index} className="leaderboard-entry">
-                  <span className="rank">
-                    {index === 0 ? "🥇" : index === 1 ? "🥈" : "🥉"}
-                  </span>
-                  <span className="name">{entry.name}</span>
-                  <span className="stats">
-                    {entry.wpm} WPM • {entry.accuracy}% Accuracy
-                  </span>
+            <div className="record-display">
+              <h3>
+                <span>Current Record</span>
+                <span className="record-trophy">🏆</span>
+              </h3>
+              {currentRecord ? (
+                <div className="record-holder">
+                  <div className="record-info">
+                    <div className="record-name">{currentRecord.name}</div>
+                    <div className="record-stats">
+                      {currentRecord.wpm} WPM • {currentRecord.accuracy}% Accuracy
+                    </div>
+                    <div className="record-date">
+                      Set on {formatDate(currentRecord.timestamp)}
+                    </div>
+                  </div>
                 </div>
-              ))}
-              {leaderboard.length === 0 && (
-                <div className="no-scores">No scores yet. Be the first!</div>
+              ) : (
+                <div className="no-record">
+                  No record set yet. Be the first!
+                </div>
               )}
             </div>
           </div>
