@@ -7,5 +7,12 @@ export default defineConfig({
   base: '/',
   server: {
     historyApiFallback: true
+  },
+  build: {
+    rollupOptions: {
+      output: {
+        manualChunks: undefined,
+      },
+    },
   }
 })
