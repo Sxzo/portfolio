@@ -4,13 +4,6 @@ import './Minigames.css'
 import { useState, useEffect } from 'react'
 import { pantryService } from '../services/pantry'
 
-interface Record {
-  wpm: number;
-  accuracy: number;
-  name: string;
-  timestamp: number;
-}
-
 function Minigames() {
   const navigate = useNavigate();
   const [highestWPM, setHighestWPM] = useState<number | null>(null);

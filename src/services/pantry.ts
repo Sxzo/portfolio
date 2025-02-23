@@ -23,16 +23,6 @@ interface PassageLeaderboard {
   [passageId: string]: LeaderboardEntry[];
 }
 
-// Update the interface to represent a single record
-interface PassageRecord {
-  [passageId: string]: {
-    name: string;
-    wpm: number;
-    accuracy: number;
-    timestamp: number;
-  };
-}
-
 // Utility to fetch all scores for a passage
 async function getAllScores(passageId: string): Promise<LeaderboardEntry[]> {
   try {

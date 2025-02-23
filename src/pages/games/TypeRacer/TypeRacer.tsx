@@ -59,7 +59,6 @@ function TypeRacer() {
   const [text, setText] = useState('');
   const [userInput, setUserInput] = useState('');
   const [startTime, setStartTime] = useState<number | null>(null);
-  const [endTime, setEndTime] = useState<number | null>(null);
   const [wpm, setWpm] = useState<number | null>(null);
   const [accuracy, setAccuracy] = useState<number | null>(null);
   const [gameState, setGameState] = useState<'ready' | 'playing' | 'finished'>('ready');
@@ -135,7 +134,6 @@ function TypeRacer() {
 
     setWpm(calculatedWpm);
     setAccuracy(calculatedAccuracy);
-    setEndTime(endTime);
     setGameState('finished');
     setShowNameInput(true);
     if (timerRef.current) clearInterval(timerRef.current);
